@@ -30,8 +30,6 @@ You cannot invite users to a team unless you are its owner.
 
 2. Click on your avatar in the top right corner of the page, then select **Team** in the left-hand panel to access the **Team** page.
 
-_On the **Team** page, you can view the information about members of your team and the teams you have joined._
+    _On the **Team** page, you can view the information about members of your team and the teams you have joined._
 
-_After accepting the team invite, you should be able to view and update the team owner's datasets whose **Permissions** is set to **Team**._
-
-## Leave a joined team
+    _After accepting the team invite, you should be able to view and update the team owner's datasets whose **Permissions** is set to **Team**._
