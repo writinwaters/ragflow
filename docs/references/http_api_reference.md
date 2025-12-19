@@ -3655,17 +3655,17 @@ Asks a specified agent a question to start an AI-powered conversation.
   - `"session_id"`: `string` (optional)
   - `"inputs"`: `object` (optional)
   - `"user_id"`: `string` (optional)
-  - `"return_trace"`: `boolean` (optional, default `false`) — include execution trace logs.
+  - `"return_trace"`: `boolean` The "return_trace": boolean parameter is optional and defaults to false. Set it to true to include detailed execution trace logs in the response, giving you step-by-step insights into the API's processing for debugging or analysis.
 
 #### Streaming events to handle
 
-When `stream=true`, the server sends Server-Sent Events (SSE). Clients should handle these `event` types:
+When `stream=true`, the server sends Server-Sent Events (SSE). Your client should listen for and handle these `event` types:
 
-- `message`: streaming content from Message components.
-- `message_end`: end of a Message component; may include `reference`/`attachment`.
-- `node_finished`: a component finishes; `data.inputs/outputs/error/elapsed_time` describe the node result. If `return_trace=true`, the trace is attached inside the same `node_finished` event (`data.trace`).
+- `message`: Streams content chunk-by-chunk from Message components as it's generated.
+- `message_end`: Signals the end of a Message component; may include reference or attachment data.
+- `node_finished`: Indicates a component has finished. The `data` includes `inputs`, `outputs`, any `error`, and `elapsed_time` to describe the result. If `return_trace=true`  , the trace logs are attached here in `data.trace`.
 
-The stream terminates with `[DONE]`.
+The stream terminates with a final `[DONE]` message.
 
 :::info IMPORTANT
 You can include custom parameters in the request body, but first ensure they are defined in the [Begin](../guides/agent/agent_component_reference/begin.mdx) component.
