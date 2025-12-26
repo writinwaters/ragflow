@@ -25,11 +25,16 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Plus, Settings, Trash2 } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MetadataType, useManageMetaDataModal } from './hook';
+import {
+  MetadataDeleteMap,
+  MetadataType,
+  useManageMetaDataModal,
+} from './hooks/use-manage-modal';
 import { IManageModalProps, IMetaDataTableData } from './interface';
 import { ManageValuesModal } from './manage-values-modal';
+
 export const ManageMetadataModal = (props: IManageModalProps) => {
   const {
     title,
@@ -134,7 +139,8 @@ export const ManageMetadataModal = (props: IManageModalProps) => {
           const values = row.getValue('values') as Array<string>;
           return (
             <div className="flex items-center gap-1">
-              {values.length > 0 &&
+              {Array.isArray(values) &&
+                values.length > 0 &&
                 values
                   .filter((value: string, index: number) => index < 2)
                   ?.map((value: string) => {
@@ -159,6 +165,7 @@ export const ManageMetadataModal = (props: IManageModalProps) => {
                                   title:
                                     t('common.delete') +
                                     ' ' +
+<<<<<<< HEAD
                                     t('knowledgeDetails.metadata.metadata'),
                                   name: row.getValue('field') + '/' + value,
                                   warnText: t(
@@ -170,6 +177,14 @@ export const ManageMetadataModal = (props: IManageModalProps) => {
                                         t('knowledgeDetails.metadata.values'),
                                     },
                                   ),
+=======
+                                    t('knowledgeDetails.metadata.value'),
+                                  name: value,
+                                  warnText:
+                                    MetadataDeleteMap(t)[
+                                      metadataType as MetadataType
+                                    ].warnValueText,
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
                                   onOk: () => {
                                     hideDeleteModal();
                                     handleDeleteSingleValue(
@@ -190,7 +205,7 @@ export const ManageMetadataModal = (props: IManageModalProps) => {
                       </Button>
                     );
                   })}
-              {values.length > 2 && (
+              {Array.isArray(values) && values.length > 2 && (
                 <div className="text-text-secondary self-end">...</div>
               )}
             </div>
@@ -221,13 +236,20 @@ export const ManageMetadataModal = (props: IManageModalProps) => {
                 setDeleteDialogContent({
                   visible: true,
                   title:
-                    t('common.delete') +
-                    ' ' +
-                    t('knowledgeDetails.metadata.metadata'),
+                    // t('common.delete') +
+                    // ' ' +
+                    // t('knowledgeDetails.metadata.metadata')
+                    MetadataDeleteMap(t)[metadataType as MetadataType].title,
                   name: row.getValue('field'),
+<<<<<<< HEAD
                   warnText: t('knowledgeDetails.metadata.deleteWarn', {
                     field: t('knowledgeDetails.metadata.field'),
                   }),
+=======
+                  warnText:
+                    MetadataDeleteMap(t)[metadataType as MetadataType]
+                      .warnFieldText,
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
                   onOk: () => {
                     hideDeleteModal();
                     handleDeleteSingleRow(row.getValue('field'));
@@ -255,6 +277,7 @@ export const ManageMetadataModal = (props: IManageModalProps) => {
     isShowDescription,
     isDeleteSingleValue,
     handleEditValueRow,
+    metadataType,
   ]);
 
   const table = useReactTable({
@@ -266,7 +289,7 @@ export const ManageMetadataModal = (props: IManageModalProps) => {
     getFilteredRowModel: getFilteredRowModel(),
     manualPagination: true,
   });
-
+  const [shouldSave, setShouldSave] = useState(false);
   const handleSaveValues = (data: IMetaDataTableData) => {
     setTableData((prev) => {
       let newData;
@@ -300,8 +323,23 @@ export const ManageMetadataModal = (props: IManageModalProps) => {
 
       return Array.from(fieldMap.values());
     });
+    setShouldSave(true);
   };
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    if (shouldSave) {
+      const timer = setTimeout(() => {
+        handleSave({ callback: () => {} });
+        setShouldSave(false);
+      }, 0);
+
+      return () => clearTimeout(timer);
+    }
+  }, [tableData, shouldSave, handleSave]);
+
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
   const existsKeys = useMemo(() => {
     return tableData.map((item) => item.field);
   }, [tableData]);
@@ -386,7 +424,8 @@ export const ManageMetadataModal = (props: IManageModalProps) => {
         <ManageValuesModal
           title={
             <div>
-              {metadataType === MetadataType.Setting
+              {metadataType === MetadataType.Setting ||
+              metadataType === MetadataType.SingleFileSetting
                 ? t('knowledgeDetails.metadata.fieldSetting')
                 : t('knowledgeDetails.metadata.editMetadata')}
             </div>

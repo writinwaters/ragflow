@@ -134,15 +134,26 @@ class ESConnection(ESConnectionBase):
 
         condition["memory_id"] = memory_ids
         for k, v in condition.items():
+<<<<<<< HEAD
             if k == "session_id" and v:
+=======
+            field_name = self.convert_field_name(k)
+            if field_name == "session_id" and v:
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
                 bool_query.filter.append(Q("query_string", **{"query": f"*{v}*", "fields": ["session_id"], "analyze_wildcard": True}))
                 continue
             if not v:
                 continue
             if isinstance(v, list):
+<<<<<<< HEAD
                 bool_query.filter.append(Q("terms", **{k: v}))
             elif isinstance(v, str) or isinstance(v, int):
                 bool_query.filter.append(Q("term", **{k: v}))
+=======
+                bool_query.filter.append(Q("terms", **{field_name: v}))
+            elif isinstance(v, str) or isinstance(v, int):
+                bool_query.filter.append(Q("term", **{field_name: v}))
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
             else:
                 raise Exception(
                     f"Condition `{str(k)}={str(v)}` value type is {str(type(v))}, expected to be int, str or list.")
@@ -227,6 +238,12 @@ class ESConnection(ESConnectionBase):
                 self.logger.exception("ES request timeout")
                 self._connect()
                 continue
+<<<<<<< HEAD
+=======
+            except NotFoundError as e:
+                self.logger.debug(f"ESConnection.search {str(index_names)} query: " + str(q) + str(e))
+                return None
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
             except Exception as e:
                 self.logger.exception(f"ESConnection.search {str(index_names)} query: " + str(q) + str(e))
                 raise e
@@ -234,7 +251,11 @@ class ESConnection(ESConnectionBase):
         self.logger.error(f"ESConnection.search timeout for {ATTEMPT_TIME} times!")
         raise Exception("ESConnection.search timeout.")
 
+<<<<<<< HEAD
     def get_forgotten_messages(self, select_fields: list[str], index_name: str, memory_id: str, limit: int=2000):
+=======
+    def get_forgotten_messages(self, select_fields: list[str], index_name: str, memory_id: str, limit: int=512):
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         bool_query = Q("bool", must_not=[])
         bool_query.must_not.append(Q("term", forget_at=None))
         bool_query.filter.append(Q("term", memory_id=memory_id))
@@ -259,6 +280,12 @@ class ESConnection(ESConnectionBase):
                 self.logger.exception("ES request timeout")
                 self._connect()
                 continue
+<<<<<<< HEAD
+=======
+            except NotFoundError as e:
+                self.logger.debug(f"ESConnection.search {str(index_name)} query: " + str(q) + str(e))
+                return None
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
             except Exception as e:
                 self.logger.exception(f"ESConnection.search {str(index_name)} query: " + str(q) + str(e))
                 raise e

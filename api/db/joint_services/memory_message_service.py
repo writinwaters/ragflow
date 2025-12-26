@@ -96,17 +96,28 @@ async def save_to_memory(memory_id: str, message_dict: dict):
     current_memory_size = get_memory_size_cache(memory_id, tenant_id)
     if new_msg_size + current_memory_size > memory.memory_size:
         size_to_delete = current_memory_size + new_msg_size - memory.memory_size
+<<<<<<< HEAD
         if memory.forgetting_policy == "fifo":
             message_ids_to_delete, delete_size = MessageService.pick_messages_to_delete_by_fifo(memory_id, tenant_id, size_to_delete)
             MessageService.delete_message({"message_id": message_ids_to_delete}, tenant_id, memory_id)
             decrease_memory_size_cache(memory_id, tenant_id, delete_size)
+=======
+        if memory.forgetting_policy == "FIFO":
+            message_ids_to_delete, delete_size = MessageService.pick_messages_to_delete_by_fifo(memory_id, tenant_id, size_to_delete)
+            MessageService.delete_message({"message_id": message_ids_to_delete}, tenant_id, memory_id)
+            decrease_memory_size_cache(memory_id, delete_size)
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         else:
             return False, "Failed to insert message into memory. Memory size reached limit and cannot decide which to delete."
     fail_cases = MessageService.insert_message(message_list, tenant_id, memory_id)
     if fail_cases:
         return False, "Failed to insert message into memory. Details: " + "; ".join(fail_cases)
 
+<<<<<<< HEAD
     increase_memory_size_cache(memory_id, tenant_id, new_msg_size)
+=======
+    increase_memory_size_cache(memory_id, new_msg_size)
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
     return True, "Message saved successfully."
 
 
@@ -163,9 +174,15 @@ def query_message(filter_dict: dict, params: dict):
     memory = memory_list[0]
     embd_model = LLMBundle(memory.tenant_id, llm_type=LLMType.EMBEDDING, llm_name=memory.embd_id)
     match_dense = get_vector(question, embd_model, similarity=params["similarity_threshold"])
+<<<<<<< HEAD
     match_text, _ = MsgTextQuery().question(question, min_match=0.3)
     keywords_similarity_weight = params.get("keywords_similarity_weight", 0.7)
     fusion_expr = FusionExpr("weighted_sum", params["top_n"], {"weights": ",".join([str(keywords_similarity_weight), str(1 - keywords_similarity_weight)])})
+=======
+    match_text, _ = MsgTextQuery().question(question, min_match=params["similarity_threshold"])
+    keywords_similarity_weight = params.get("keywords_similarity_weight", 0.7)
+    fusion_expr = FusionExpr("weighted_sum", params["top_n"], {"weights": ",".join([str(1 - keywords_similarity_weight), str(keywords_similarity_weight)])})
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
 
     return MessageService.search_message(memory_ids, condition_dict, uids, [match_text, match_dense, fusion_expr], params["top_n"])
 
@@ -191,8 +208,13 @@ def init_message_id_sequence():
 
 def get_memory_size_cache(memory_id: str, uid: str):
     redis_key = f"memory_{memory_id}"
+<<<<<<< HEAD
     if REDIS_CONN.exists(redis_key):
         return REDIS_CONN.get(redis_key)
+=======
+    if REDIS_CONN.exist(redis_key):
+        return int(REDIS_CONN.get(redis_key))
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
     else:
         memory_size_map = MessageService.calculate_memory_size(
             [memory_id],
@@ -208,6 +230,7 @@ def set_memory_size_cache(memory_id: str, size: int):
     return REDIS_CONN.set(redis_key, size)
 
 
+<<<<<<< HEAD
 def increase_memory_size_cache(memory_id: str, uid: str, size: int):
     current_value = get_memory_size_cache(memory_id, uid)
     return set_memory_size_cache(memory_id, current_value + size)
@@ -216,6 +239,16 @@ def increase_memory_size_cache(memory_id: str, uid: str, size: int):
 def decrease_memory_size_cache(memory_id: str, uid: str, size: int):
     current_value = get_memory_size_cache(memory_id, uid)
     return set_memory_size_cache(memory_id, max(current_value - size, 0))
+=======
+def increase_memory_size_cache(memory_id: str, size: int):
+    redis_key = f"memory_{memory_id}"
+    return REDIS_CONN.incrby(redis_key, size)
+
+
+def decrease_memory_size_cache(memory_id: str, size: int):
+    redis_key = f"memory_{memory_id}"
+    return REDIS_CONN.decrby(redis_key, size)
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
 
 
 def init_memory_size_cache():
@@ -231,3 +264,11 @@ def init_memory_size_cache():
             memory_size = memory_size_map.get(memory.id, 0)
             set_memory_size_cache(memory.id, memory_size)
         logging.info("Memory size cache init done.")
+<<<<<<< HEAD
+=======
+
+
+def judge_system_prompt_is_default(system_prompt: str, memory_type: int|list[str]):
+    memory_type_list = memory_type if isinstance(memory_type, list) else get_memory_type_human(memory_type)
+    return system_prompt == PromptAssembler.assemble_system_prompt({"memory_type": memory_type_list})
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e

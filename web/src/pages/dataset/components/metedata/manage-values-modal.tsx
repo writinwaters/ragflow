@@ -4,15 +4,21 @@ import {
 } from '@/components/confirm-delete-dialog';
 import EditTag from '@/components/edit-tag';
 import { Button } from '@/components/ui/button';
+import { FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Modal } from '@/components/ui/modal/modal';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, Trash2 } from 'lucide-react';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
+<<<<<<< HEAD
 import { MetadataType } from './hook';
 import { IManageValuesProps, IMetaDataTableData } from './interface';
+=======
+import { useManageValues } from './hooks/use-manage-values-modal';
+import { IManageValuesProps } from './interface';
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
 
 // Create a separate input component, wrapped with memo to avoid unnecessary re-renders
 const ValueInputItem = memo(
@@ -57,21 +63,36 @@ const ValueInputItem = memo(
 export const ManageValuesModal = (props: IManageValuesProps) => {
   const {
     title,
-    data,
     isEditField,
     visible,
     isAddValue,
     isShowDescription,
     isShowValueSwitch,
     isVerticalShowValue,
+<<<<<<< HEAD
     hideModal,
     onSave,
     addUpdateValue,
     addDeleteValue,
     existsKeys,
     type,
+=======
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
   } = props;
-  const [metaData, setMetaData] = useState(data);
+  const {
+    metaData,
+    tempValues,
+    valueError,
+    deleteDialogContent,
+    handleChange,
+    handleValueChange,
+    handleValueBlur,
+    handleDelete,
+    handleAddValue,
+    showDeleteModal,
+    handleSave,
+    handleHideModal,
+  } = useManageValues(props);
   const { t } = useTranslation();
   const [valueError, setValueError] = useState<Record<string, string>>({
     field: '',
@@ -96,6 +117,7 @@ export const ManageValuesModal = (props: IManageValuesProps) => {
     });
   };
 
+<<<<<<< HEAD
   // Use functional update to avoid closure issues
   const handleChange = useCallback(
     (field: string, value: any) => {
@@ -240,6 +262,8 @@ export const ManageValuesModal = (props: IManageValuesProps) => {
     }));
   }, []);
 
+=======
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
   return (
     <Modal
       title={title}
@@ -276,7 +300,12 @@ export const ManageValuesModal = (props: IManageValuesProps) => {
         )}
         {isShowDescription && (
           <div className="flex flex-col gap-2">
-            <div>{t('knowledgeDetails.metadata.description')}</div>
+            <FormLabel
+              className="text-text-primary text-base"
+              tooltip={t('knowledgeDetails.metadata.descriptionTip')}
+            >
+              {t('knowledgeDetails.metadata.description')}
+            </FormLabel>
             <div>
               <Textarea
                 value={metaData.description}
@@ -289,7 +318,12 @@ export const ManageValuesModal = (props: IManageValuesProps) => {
         )}
         {isShowValueSwitch && (
           <div className="flex flex-col gap-2">
-            <div>{t('knowledgeDetails.metadata.restrictDefinedValues')}</div>
+            <FormLabel
+              className="text-text-primary text-base"
+              tooltip={t('knowledgeDetails.metadata.restrictTDefinedValuesTip')}
+            >
+              {t('knowledgeDetails.metadata.restrictDefinedValues')}
+            </FormLabel>
             <div>
               <Switch
                 checked={metaData.restrictDefinedValues || false}

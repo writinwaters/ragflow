@@ -272,6 +272,15 @@ class RedisDB:
             self.__open__()
         return None
 
+<<<<<<< HEAD
+=======
+    def incrby(self, key: str, increment: int):
+        return self.REDIS.incrby(key, increment)
+
+    def decrby(self, key: str, decrement: int):
+        return self.REDIS.decrby(key, decrement)
+
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
     def generate_auto_increment_id(self, key_prefix: str = "id_generator", namespace: str = "default", increment: int = 1, ensure_minimum: int | None = None) -> int:
         redis_key = f"{key_prefix}:{namespace}"
 

@@ -82,6 +82,15 @@ class MessageService:
             offset=(page-1)*page_size, limit=page_size,
             index_names=index, memory_ids=[memory_id], agg_fields=[], hide_forgotten=False
         )
+<<<<<<< HEAD
+=======
+        if not res:
+            return {
+            "message_list": [],
+            "total_count": 0
+        }
+
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         total_count = settings.msgStoreConn.get_total(res)
         doc_mapping = settings.msgStoreConn.get_fields(res, [
             "message_id", "message_type", "source_id", "memory_id", "user_id", "agent_id", "session_id",
@@ -112,6 +121,12 @@ class MessageService:
             offset=0, limit=limit,
             index_names=index_names, memory_ids=memory_ids, agg_fields=[]
         )
+<<<<<<< HEAD
+=======
+        if not res:
+            return []
+
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         doc_mapping = settings.msgStoreConn.get_fields(res, [
             "message_id", "message_type", "source_id", "memory_id","user_id", "agent_id", "session_id",
             "valid_at", "invalid_at", "forget_at", "status", "content"
@@ -140,6 +155,12 @@ class MessageService:
             offset=0, limit=top_n,
             index_names=index_names, memory_ids=memory_ids, agg_fields=[]
         )
+<<<<<<< HEAD
+=======
+        if not res:
+            return []
+
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         docs = settings.msgStoreConn.get_fields(res, [
             "message_id", "message_type", "source_id", "memory_id", "user_id", "agent_id", "session_id", "valid_at",
             "invalid_at", "forget_at", "status", "content"
@@ -162,9 +183,17 @@ class MessageService:
             condition={},
             match_expressions=[],
             order_by=order_by,
+<<<<<<< HEAD
             offset=0, limit=2000*len(memory_ids),
             index_names=index_names, memory_ids=memory_ids, agg_fields=[], hide_forgotten=False
         )
+=======
+            offset=0, limit=2048*len(memory_ids),
+            index_names=index_names, memory_ids=memory_ids, agg_fields=[], hide_forgotten=False
+        )
+        if not res:
+            return {}
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         docs = settings.msgStoreConn.get_fields(res, ["memory_id", "content", "content_embed"])
         size_dict = {}
         for doc in docs.values():
@@ -179,6 +208,11 @@ class MessageService:
         select_fields = ["message_id", "content", "content_embed"]
         _index_name = index_name(uid)
         res = settings.msgStoreConn.get_forgotten_messages(select_fields, _index_name, memory_id)
+<<<<<<< HEAD
+=======
+        if not res:
+            return []
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         message_list = settings.msgStoreConn.get_fields(res, select_fields)
         current_size = 0
         ids_to_remove = []
@@ -199,7 +233,11 @@ class MessageService:
             condition={},
             match_expressions=[],
             order_by=order_by,
+<<<<<<< HEAD
             offset=0, limit=2000,
+=======
+            offset=0, limit=512,
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
             index_names=[_index_name], memory_ids=[memory_id], agg_fields=[]
         )
         docs = settings.msgStoreConn.get_fields(res, select_fields)
@@ -232,6 +270,12 @@ class MessageService:
             index_names=index_names, memory_ids=memory_ids,
             agg_fields=[], hide_forgotten=False
         )
+<<<<<<< HEAD
+=======
+        if not res:
+            return 1
+
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         docs = settings.msgStoreConn.get_fields(res, ["message_id"])
         if not docs:
             return 1

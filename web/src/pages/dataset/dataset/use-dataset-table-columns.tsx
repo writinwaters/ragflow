@@ -16,7 +16,10 @@ import { formatDate } from '@/utils/date';
 import { ColumnDef } from '@tanstack/table-core';
 import { ArrowUpDown, MonitorUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { MetadataType, util } from '../components/metedata/hook';
+import {
+  MetadataType,
+  util,
+} from '../components/metedata/hooks/use-manage-modal';
 import { ShowManageMetadataModalProps } from '../components/metedata/interface';
 import { DatasetActionCell } from './dataset-action-cell';
 import { ParsingStatusCell } from './parsing-status-cell';
@@ -184,11 +187,11 @@ export function useDatasetTableColumns({
                 type: MetadataType.UpdateSingle,
                 record: row,
                 title: (
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 w-full">
                     <div className="text-base font-normal">
                       {t('metadata.editMetadata')}
                     </div>
-                    <div className="text-sm text-text-secondary">
+                    <div className="text-sm text-text-secondary w-full truncate">
                       {t('metadata.editMetadataForDataset')}
                       {row.name}
                     </div>

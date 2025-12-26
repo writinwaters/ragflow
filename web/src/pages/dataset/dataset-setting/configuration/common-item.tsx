@@ -35,7 +35,8 @@ import {
   MetadataType,
   useManageMetadata,
   util,
-} from '../../components/metedata/hook';
+} from '../../components/metedata/hooks/use-manage-modal';
+import { IMetaDataReturnJSONSettings } from '../../components/metedata/interface';
 import { ManageMetadataModal } from '../../components/metedata/manage-modal';
 import {
   useHandleKbEmbedding,
@@ -359,7 +360,13 @@ export function OverlappedPercent() {
   );
 }
 
-export function AutoMetadata() {
+export function AutoMetadata({
+  type = MetadataType.Setting,
+  otherData,
+}: {
+  type?: MetadataType;
+  otherData?: Record<string, any>;
+}) {
   // get metadata field
   const form = useFormContext();
   const {
@@ -369,6 +376,7 @@ export function AutoMetadata() {
     tableData,
     config: metadataConfig,
   } = useManageMetadata();
+
   const autoMetadataField: FormFieldConfig = {
     name: 'parser_config.enable_metadata',
     label: t('knowledgeConfiguration.autoMetadata'),
@@ -379,6 +387,7 @@ export function AutoMetadata() {
     render: (fieldProps: ControllerRenderProps) => (
       <div className="flex items-center justify-between">
         <Button
+          type="button"
           variant="ghost"
           onClick={() => {
             const metadata = form.getValues('parser_config.metadata');
@@ -387,7 +396,8 @@ export function AutoMetadata() {
             showManageMetadataModal({
               metadata: tableMetaData,
               isCanAdd: true,
-              type: MetadataType.Setting,
+              type: type,
+              record: otherData,
             });
           }}
         >
@@ -402,6 +412,10 @@ export function AutoMetadata() {
         />
       </div>
     ),
+  };
+
+  const handleSaveMetadata = (data?: IMetaDataReturnJSONSettings) => {
+    form.setValue('parser_config.metadata', data || []);
   };
   return (
     <>
@@ -431,8 +445,8 @@ export function AutoMetadata() {
           isShowDescription={true}
           isShowValueSwitch={true}
           isVerticalShowValue={false}
-          success={(data) => {
-            form.setValue('parser_config.metadata', data || []);
+          success={(data?: IMetaDataReturnJSONSettings) => {
+            handleSaveMetadata(data);
           }}
         />
       )}
@@ -471,7 +485,7 @@ export const LLMSelect = ({
 export function LLMModelItem({ line = 1, isEdit, label, name }: IProps) {
   const { t } = useTranslate('knowledgeConfiguration');
   const form = useFormContext();
-  const disabled = useHasParsedDocument(isEdit);
+  // const disabled = useHasParsedDocument(isEdit);
   return (
     <>
       <FormField
@@ -501,7 +515,7 @@ export function LLMModelItem({ line = 1, isEdit, label, name }: IProps) {
                   <LLMSelect
                     isEdit={!!isEdit}
                     field={field}
-                    disabled={disabled}
+                    disabled={false}
                   ></LLMSelect>
                 </FormControl>
               </div>

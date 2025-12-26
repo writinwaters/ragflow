@@ -21,7 +21,11 @@ import time
 import os
 from abc import abstractmethod
 
+<<<<<<< HEAD
 from elasticsearch import Elasticsearch, NotFoundError
+=======
+from elasticsearch import NotFoundError
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
 from elasticsearch_dsl import Index
 from elastic_transport import ConnectionTimeout
 from common.file_utils import get_project_base_directory
@@ -35,10 +39,16 @@ ATTEMPT_TIME = 2
 
 class ESConnectionBase(DocStoreConnection):
     def __init__(self, mapping_file_name: str="mapping.json", logger_name: str='ragflow.es_conn'):
+<<<<<<< HEAD
+=======
+        from common.doc_store.es_conn_pool import ES_CONN
+
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         self.logger = logging.getLogger(logger_name)
 
         self.info = {}
         self.logger.info(f"Use Elasticsearch {settings.ES['hosts']} as the doc engine.")
+<<<<<<< HEAD
         for _ in range(ATTEMPT_TIME):
             try:
                 if self._connect():
@@ -57,6 +67,9 @@ class ESConnectionBase(DocStoreConnection):
             msg = f"Elasticsearch version must be greater than or equal to 8, current version: {v}"
             self.logger.error(msg)
             raise Exception(msg)
+=======
+        self.es = ES_CONN.get_conn()
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         fp_mapping = os.path.join(get_project_base_directory(), "conf", mapping_file_name)
         if not os.path.exists(fp_mapping):
             msg = f"Elasticsearch mapping file not found at {fp_mapping}"
@@ -66,6 +79,7 @@ class ESConnectionBase(DocStoreConnection):
         self.logger.info(f"Elasticsearch {settings.ES['hosts']} is healthy.")
 
     def _connect(self):
+<<<<<<< HEAD
         self.es = Elasticsearch(
             settings.ES["hosts"].split(","),
             basic_auth=(settings.ES["username"], settings.ES[
@@ -76,6 +90,14 @@ class ESConnectionBase(DocStoreConnection):
             self.info = self.es.info()
             return True
         return False
+=======
+        from common.doc_store.es_conn_pool import ES_CONN
+
+        if self.es.ping():
+            return True
+        self.es = ES_CONN.refresh_conn()
+        return True
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
 
     """
     Database operations

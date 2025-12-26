@@ -31,8 +31,12 @@ from common.time_utils import date_string_to_timestamp
 @singleton
 class InfinityConnection(InfinityConnectionBase):
     def __init__(self):
+<<<<<<< HEAD
         super().__init__()
         self.mapping_file_name = "message_infinity_mapping.json"
+=======
+        super().__init__(mapping_file_name="message_infinity_mapping.json")
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
 
     """
     Dataframe and fields convert
@@ -44,12 +48,26 @@ class InfinityConnection(InfinityConnectionBase):
         return False
 
     @staticmethod
+<<<<<<< HEAD
     def convert_message_field_to_infinity(field_name: str):
+=======
+    def convert_message_field_to_infinity(field_name: str, table_fields: list[str]=None):
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         match field_name:
             case "message_type":
                 return "message_type_kwd"
             case "status":
                 return "status_int"
+<<<<<<< HEAD
+=======
+            case "content_embed":
+                if not table_fields:
+                    raise Exception("Can't convert 'content_embed' to vector field name with empty table fields.")
+                vector_field = [tf for tf in table_fields if re.match(r"q_\d+_vec", tf)]
+                if not vector_field:
+                    raise Exception("Can't convert 'content_embed' to vector field name. No match field name found.")
+                return vector_field[0]
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
             case _:
                 return field_name
 
@@ -63,15 +81,24 @@ class InfinityConnection(InfinityConnectionBase):
             return "content_embed"
         return field_name
 
+<<<<<<< HEAD
     def convert_select_fields(self, output_fields: list[str]) -> list[str]:
         return list({self.convert_message_field_to_infinity(f) for f in output_fields})
+=======
+    def convert_select_fields(self, output_fields: list[str], table_fields: list[str]=None) -> list[str]:
+        return list({self.convert_message_field_to_infinity(f, table_fields) for f in output_fields})
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
 
     @staticmethod
     def convert_matching_field(field_weight_str: str) -> str:
         tokens = field_weight_str.split("^")
         field = tokens[0]
         if field == "content":
+<<<<<<< HEAD
             field = "content@ft_contentm_rag_fine"
+=======
+            field = "content@ft_content_rag_fine"
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         tokens[0] = field
         return "^".join(tokens)
 
@@ -123,7 +150,10 @@ class InfinityConnection(InfinityConnectionBase):
         if hide_forgotten:
             condition.update({"must_not": {"exists": "forget_at_flt"}})
         output = select_fields.copy()
+<<<<<<< HEAD
         output = self.convert_select_fields(output)
+=======
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         if agg_fields is None:
             agg_fields = []
         for essential_field in ["id"] + agg_fields:
@@ -214,6 +244,7 @@ class InfinityConnection(InfinityConnectionBase):
                     del matchExpr.extra_options["similarity"]
                 self.logger.debug(f"INFINITY search MatchDenseExpr: {json.dumps(matchExpr.__dict__)}")
             elif isinstance(matchExpr, FusionExpr):
+<<<<<<< HEAD
                 self.logger.debug(f"INFINITY search FusionExpr: {json.dumps(matchExpr.__dict__)}")
 
         order_by_expr_list = list()
@@ -227,6 +258,26 @@ class InfinityConnection(InfinityConnectionBase):
 
         total_hits_count = 0
         # Scatter search tables and gather the results
+=======
+                if matchExpr.method == "weighted_sum":
+                    # The default is "minmax" which gives a zero score for the last doc.
+                    matchExpr.fusion_params["normalize"] = "atan"
+                self.logger.debug(f"INFINITY search FusionExpr: {json.dumps(matchExpr.__dict__)}")
+
+        order_by_expr_list = list()
+        # todo use order_by after infinity fixed bug
+        # if order_by.fields:
+        #     for order_field in order_by.fields:
+        #         order_field_name = self.convert_condition_and_order_field(order_field[0])
+        #         if order_field[1] == 0:
+        #             order_by_expr_list.append((order_field_name, SortType.Asc))
+        #         else:
+        #             order_by_expr_list.append((order_field_name, SortType.Desc))
+
+        total_hits_count = 0
+        # Scatter search tables and gather the results
+        column_name_list = []
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         for indexName in index_names:
             for memory_id in memory_ids:
                 table_name = f"{indexName}_{memory_id}"
@@ -235,6 +286,12 @@ class InfinityConnection(InfinityConnectionBase):
                 except Exception:
                     continue
                 table_list.append(table_name)
+<<<<<<< HEAD
+=======
+                if not column_name_list:
+                    column_name_list = [r[0] for r in table_instance.show_columns().rows()]
+                output = self.convert_select_fields(output, column_name_list)
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
                 builder = table_instance.output(output)
                 if len(match_expressions) > 0:
                     for matchExpr in match_expressions:
@@ -277,7 +334,11 @@ class InfinityConnection(InfinityConnectionBase):
         self.logger.debug(f"INFINITY search final result: {str(res)}")
         return res, total_hits_count
 
+<<<<<<< HEAD
     def get_forgotten_messages(self, select_fields: list[str], index_name: str, memory_id: str, limit: int=2000):
+=======
+    def get_forgotten_messages(self, select_fields: list[str], index_name: str, memory_id: str, limit: int=512):
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         condition = {"memory_id": memory_id, "exists": "forget_at_flt"}
         order_by = OrderByExpr()
         order_by.asc("forget_at_flt")
@@ -286,7 +347,12 @@ class InfinityConnection(InfinityConnectionBase):
         db_instance = inf_conn.get_database(self.dbName)
         table_name = f"{index_name}_{memory_id}"
         table_instance = db_instance.get_table(table_name)
+<<<<<<< HEAD
         output_fields = [self.convert_message_field_to_infinity(f) for f in select_fields]
+=======
+        column_name_list = [r[0] for r in table_instance.show_columns().rows()]
+        output_fields = [self.convert_message_field_to_infinity(f, column_name_list) for f in select_fields]
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         builder = table_instance.output(output_fields)
         filter_cond = self.equivalent_condition_to_str(condition, db_instance.get_table(table_name))
         builder.filter(filter_cond)
@@ -327,7 +393,11 @@ class InfinityConnection(InfinityConnectionBase):
         res = self.concat_dataframes(df_list, ["id"])
         fields = set(res.columns.tolist())
         res_fields = self.get_fields(res, list(fields))
+<<<<<<< HEAD
         return res_fields.get(message_id, None)
+=======
+        return {self.convert_infinity_field_to_message(k): v for k, v in res_fields[message_id].items()} if res_fields.get(message_id) else {}
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
 
     def insert(self, documents: list[dict], index_name: str, memory_id: str = None) -> list[str]:
         if not documents:
@@ -361,6 +431,13 @@ class InfinityConnection(InfinityConnectionBase):
             assert "_id" not in d
             assert "id" in d
             for k, v in list(d.items()):
+<<<<<<< HEAD
+=======
+                if k == "content_embed":
+                    d[f"q_{vector_size}_vec"] = d["content_embed"]
+                    d.pop("content_embed")
+                    continue
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
                 field_name = self.convert_message_field_to_infinity(k)
                 if field_name in ["valid_at", "invalid_at", "forget_at"]:
                     d[f"{field_name}_flt"] = date_string_to_timestamp(v) if v else 0
@@ -374,9 +451,12 @@ class InfinityConnection(InfinityConnectionBase):
                 elif k == "memory_id":
                     if isinstance(d[k], list):
                         d[k] = d[k][0]  # since d[k] is a list, but we need a str
+<<<<<<< HEAD
                 elif field_name == "content_embed":
                     d[f"q_{vector_size}_vec"] = d["content_embed"]
                     d.pop("content_embed")
+=======
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
                 else:
                     d[field_name] = v
                 if k != field_name:
@@ -436,11 +516,18 @@ class InfinityConnection(InfinityConnectionBase):
 
     def get_fields(self, res: tuple[pd.DataFrame, int] | pd.DataFrame, fields: list[str]) -> dict[str, dict]:
         if isinstance(res, tuple):
+<<<<<<< HEAD
             res = res[0]
+=======
+            res_df = res[0]
+        else:
+            res_df = res
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         if not fields:
             return {}
         fields_all = fields.copy()
         fields_all.append("id")
+<<<<<<< HEAD
         fields_all = {self.convert_message_field_to_infinity(f) for f in fields_all}
 
         column_map = {col.lower(): col for col in res.columns}
@@ -464,4 +551,27 @@ class InfinityConnection(InfinityConnectionBase):
             res2[column] = None
 
         res_dict = res2.set_index("id").to_dict(orient="index")
+=======
+        fields_all = self.convert_select_fields(fields_all, res_df.columns.tolist())
+
+        column_map = {col.lower(): col for col in res_df.columns}
+        matched_columns = {column_map[col.lower()]: col for col in fields_all if col.lower() in column_map}
+        none_columns = [col for col in fields_all if col.lower() not in column_map]
+
+        selected_res = res_df[matched_columns.keys()]
+        selected_res = selected_res.rename(columns=matched_columns)
+        selected_res.drop_duplicates(subset=["id"], inplace=True)
+
+        for column in list(selected_res.columns):
+            k = column.lower()
+            if self.field_keyword(k):
+                selected_res[column] = selected_res[column].apply(lambda v: [kwd for kwd in v.split("###") if kwd])
+            else:
+                pass
+
+        for column in none_columns:
+            selected_res[column] = None
+
+        res_dict = selected_res.set_index("id").to_dict(orient="index")
+>>>>>>> d285d8cd972893c1d65b514eb10557e58d20732e
         return {_id: {self.convert_infinity_field_to_message(k): v for k, v in doc.items()} for _id, doc in res_dict.items()}
