@@ -19,7 +19,7 @@ Released on May 9, 2026.
 
 ### Data source
 
-- Introduces a lightweight snapshot mechanism for synchronizing deleted files across eight data sources—including Moodle, DingTalk AI TableV, and RSS—ensuring a faithful reflection of all remote data sources. [#14362](https://github.com/infiniflow/ragflow/issues/14362)[#14499](https://github.com/infiniflow/ragflow/pull/14499)
+- Introduces a lightweight snapshot mechanism for synchronizing deleted files across eight data sources—including Moodle, DingTalk AI Table, and RSS—ensuring a faithful reflection of all remote data sources. [#14362](https://github.com/infiniflow/ragflow/issues/14362)[#14499](https://github.com/infiniflow/ragflow/pull/14499)
 
 ### Bug fixes
 
@@ -39,7 +39,7 @@ Released on April 29, 2026.
 
 ### Data source
 
-Enables synchronizing deleted files in Bitbucket, Gmail, Google Drive, and Airtable.[#14362](https://github.com/infiniflow/ragflow/issues/14362)
+Enables synchronizing deleted files in Bitbucket, Gmail, Google Drive, and Airtable. [#14362](https://github.com/infiniflow/ragflow/issues/14362)
 
 ### Model support
 
