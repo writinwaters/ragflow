@@ -28,7 +28,7 @@ Released on May 14, 2026
 
 ### Bug fixes
 
-- Dataset: Corrects the API endpoint for downloading the original files, ensuring they are correctly retrieved from a specified dataset. [#14910](https://github.com/infiniflow/ragflow/pull/14910) See also [Download document](./references/http_api_reference.md#download-document)
+- Dataset: Corrects the API endpoint for downloading the original files, ensuring they are correctly retrieved from a specified dataset. [#14910](https://github.com/infiniflow/ragflow/pull/14910) See also [Download document](./references/http_api_reference.md#download-document).
 
 ## v0.25.3
 
